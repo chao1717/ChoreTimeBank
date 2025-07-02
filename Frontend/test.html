@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>测试 ethers</title>
+</head>
+<body>
+  <p>当前地址: <span id="account"></span></p>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script>
+    async function test() {
+      if (!window.ethereum) {
+        alert("请安装钱包插件");
+        return;
+      }
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const addr = await signer.getAddress();
+      document.getElementById("account").innerText = addr;
+    }
+    test();
+  </script>
+</body>
+</html>
