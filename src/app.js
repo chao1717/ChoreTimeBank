@@ -79,6 +79,25 @@ const CONTRACT_ABI =[
 		"type": "event"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "member",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "nickname",
+				"type": "string"
+			}
+		],
+		"name": "NicknameSet",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -170,6 +189,38 @@ const CONTRACT_ABI =[
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_member",
+				"type": "address"
+			}
+		],
+		"name": "getNickname",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nickname",
+				"type": "string"
+			}
+		],
+		"name": "setNickname",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -279,6 +330,13 @@ function App() {
     { id: 4, name: '家务王者', points: 200, claimed: false }
   ]);
   const [userPoints, setUserPoints] = useState(0);
+  const [userNickname, setUserNickname] = useState('');
+  const [isOwner, setIsOwner] = useState(false);
+  const [showAddChoreForm, setShowAddChoreForm] = useState(false);
+  const [showNicknameForm, setShowNicknameForm] = useState(false);
+  const [newChoreName, setNewChoreName] = useState('');
+  const [newChorePoints, setNewChorePoints] = useState('');
+  const [newNickname, setNewNickname] = useState('');
 
   // 初始化以太坊连接
   const checkWalletIsConnected = async () => {
@@ -326,6 +384,14 @@ function App() {
       const points = await contract.getPoints(account);
       setUserPoints(points.toNumber());
       
+      // 获取用户昵称
+      const nickname = await contract.getNickname(account);
+      setUserNickname(nickname);
+      
+      // 检查是否为合约所有者
+      const owner = await contract.owner();
+      setIsOwner(owner.toLowerCase() === account.toLowerCase());
+      
       // 这里可以添加获取成员列表的逻辑
       // 注意: 原合约中没有直接获取所有成员的功能，需要扩展合约或使用其他方式
     } catch (err) {
@@ -343,6 +409,47 @@ function App() {
       setUserPoints(points.toNumber());
     } catch (err) {
       console.error('Error submitting chore:', err);
+    }
+  };
+
+  const addChore = async (name, points) => {
+    try {
+      const tx = await contract.addChore(name, points);
+      await tx.wait();
+      
+      // 刷新家务列表
+      const chores = await contract.getAllChores();
+      setChores(chores);
+      
+      // 重置表单
+      setNewChoreName('');
+      setNewChorePoints('');
+      setShowAddChoreForm(false);
+      
+      alert('家务添加成功！');
+    } catch (err) {
+      console.error('Error adding chore:', err);
+      alert('添加家务失败：' + err.message);
+    }
+  };
+
+  const setNickname = async (nickname) => {
+    try {
+      const tx = await contract.setNickname(nickname);
+      await tx.wait();
+      
+      // 刷新昵称
+      const newNickname = await contract.getNickname(currentAccount);
+      setUserNickname(newNickname);
+      
+      // 重置表单
+      setNewNickname('');
+      setShowNicknameForm(false);
+      
+      alert('昵称设置成功！');
+    } catch (err) {
+      console.error('Error setting nickname:', err);
+      alert('设置昵称失败：' + err.message);
     }
   };
 
@@ -372,7 +479,16 @@ function App() {
           </button>
         ) : (
           <div className="wallet-info">
-            <span>{`${currentAccount.substring(0, 6)}...${currentAccount.substring(currentAccount.length - 4)}`}</span>
+            <div className="user-info">
+              <span className="address">{`${currentAccount.substring(0, 6)}...${currentAccount.substring(currentAccount.length - 4)}`}</span>
+              {userNickname && <span className="nickname">({userNickname})</span>}
+              <button 
+                className="set-nickname-btn"
+                onClick={() => setShowNicknameForm(true)}
+              >
+                设置昵称
+              </button>
+            </div>
             <div className="points-display">{userPoints} 积分</div>
           </div>
         )}
@@ -455,7 +571,59 @@ function App() {
 
         {activeTab === 'chores' && (
           <div className="chores-section">
-            <h2>家务列表</h2>
+            <div className="chores-header">
+              <h2>家务列表</h2>
+              {isOwner && (
+                <button 
+                  className="add-chore-btn"
+                  onClick={() => setShowAddChoreForm(true)}
+                >
+                  添加家务
+                </button>
+              )}
+            </div>
+            
+            {showAddChoreForm && (
+              <div className="add-chore-form">
+                <h3>添加新家务</h3>
+                <div className="form-group">
+                  <label>家务名称:</label>
+                  <input
+                    type="text"
+                    value={newChoreName}
+                    onChange={(e) => setNewChoreName(e.target.value)}
+                    placeholder="输入家务名称"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>积分奖励:</label>
+                  <input
+                    type="number"
+                    value={newChorePoints}
+                    onChange={(e) => setNewChorePoints(e.target.value)}
+                    placeholder="输入积分数量"
+                  />
+                </div>
+                <div className="form-actions">
+                  <button 
+                    onClick={() => addChore(newChoreName, parseInt(newChorePoints))}
+                    disabled={!newChoreName || !newChorePoints}
+                  >
+                    添加
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setShowAddChoreForm(false);
+                      setNewChoreName('');
+                      setNewChorePoints('');
+                    }}
+                  >
+                    取消
+                  </button>
+                </div>
+              </div>
+            )}
+            
             <div className="chores-list">
               {chores.map((chore, index) => (
                 <div key={index} className="chore-card">
@@ -505,6 +673,40 @@ function App() {
       <footer className="app-footer">
         <p>家务时间银行 © 2023 - 用爱经营的家</p>
       </footer>
+
+      {/* 昵称设置模态框 */}
+      {showNicknameForm && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>设置昵称</h3>
+            <div className="form-group">
+              <label>昵称:</label>
+              <input
+                type="text"
+                value={newNickname}
+                onChange={(e) => setNewNickname(e.target.value)}
+                placeholder="输入你的昵称"
+              />
+            </div>
+            <div className="form-actions">
+              <button 
+                onClick={() => setNickname(newNickname)}
+                disabled={!newNickname}
+              >
+                设置
+              </button>
+              <button 
+                onClick={() => {
+                  setShowNicknameForm(false);
+                  setNewNickname('');
+                }}
+              >
+                取消
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

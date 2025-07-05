@@ -19,9 +19,11 @@ contract ChoresTimeBank {
 
     mapping(address => Record[]) public records;
     mapping(address => uint256) public totalPoints;
+    mapping(address => string) public nicknames;
 
     event ChoreAdded(uint256 id, string name, uint256 points);
     event ChoreSubmitted(address member, uint256 choreId, uint256 points);
+    event NicknameSet(address member, string nickname);
 
     constructor() {
         owner = msg.sender;
@@ -39,6 +41,15 @@ contract ChoresTimeBank {
         records[msg.sender].push(Record(_choreId, block.timestamp));
         totalPoints[msg.sender] += chores[_choreId].points;
         emit ChoreSubmitted(msg.sender, _choreId, chores[_choreId].points);
+    }
+
+    function setNickname(string memory _nickname) public {
+        nicknames[msg.sender] = _nickname;
+        emit NicknameSet(msg.sender, _nickname);
+    }
+
+    function getNickname(address _member) public view returns (string memory) {
+        return nicknames[_member];
     }
 
     function getRecords(address _member) public view returns (Record[] memory) {

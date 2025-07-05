@@ -392,3 +392,151 @@
       flex-wrap: wrap;
     }
   }
+
+  /* 新增样式 */
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .address {
+    font-weight: bold;
+  }
+
+  .nickname {
+    color: #ff6b9d;
+    font-style: italic;
+  }
+
+  .set-nickname-btn {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .set-nickname-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .chores-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .add-chore-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .add-chore-btn:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+  }
+
+  .add-chore-form {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+  }
+
+  .add-chore-form h3 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .form-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .form-actions button:first-child {
+    background: #4CAF50;
+    color: white;
+  }
+
+  .form-actions button:first-child:hover {
+    background: #45a049;
+  }
+
+  .form-actions button:last-child {
+    background: #f44336;
+    color: white;
+  }
+
+  .form-actions button:last-child:hover {
+    background: #da190b;
+  }
+
+  .form-actions button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    min-width: 300px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal h3 {
+    margin-bottom: 20px;
+    color: #333;
+  }

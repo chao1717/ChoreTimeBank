@@ -1,25 +1,143 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>测试 ethers</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家务时间银行 - 功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffe3f0 0%, #dab6f0 35%, #b0c4ff 70%, #ffd1a1 100%);
+            min-height: 100vh;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            background: rgba(255, 255, 255, 0.3);
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        .feature-list li h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .feature-list li p {
+            margin: 0;
+            color: #666;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status.completed {
+            background: #4CAF50;
+            color: white;
+        }
+        .status.pending {
+            background: #ff9800;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-  <p>当前地址: <span id="account"></span></p>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script>
-    async function test() {
-      if (!window.ethereum) {
-        alert("请安装钱包插件");
-        return;
-      }
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const addr = await signer.getAddress();
-      document.getElementById("account").innerText = addr;
-    }
-    test();
-  </script>
+    <h1>家务时间银行 - 新功能测试</h1>
+    
+    <div class="test-section">
+        <h2>新增功能列表</h2>
+        <ul class="feature-list">
+            <li>
+                <h3>添加家务功能 <span class="status completed">已完成</span></h3>
+                <p>合约所有者可以添加新的家务任务，包括任务名称和积分奖励。只有合约所有者（部署者）才能添加家务。</p>
+            </li>
+            <li>
+                <h3>昵称设置功能 <span class="status completed">已完成</span></h3>
+                <p>用户可以设置个人昵称，昵称会显示在钱包地址旁边，让用户更容易识别。</p>
+            </li>
+            <li>
+                <h3>智能合约更新 <span class="status completed">已完成</span></h3>
+                <p>在智能合约中添加了昵称映射、设置昵称函数和相关事件。</p>
+            </li>
+            <li>
+                <h3>前端界面优化 <span class="status completed">已完成</span></h3>
+                <p>更新了前端界面，添加了表单、模态框和相应的样式，提供更好的用户体验。</p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>使用说明</h2>
+        <ul class="feature-list">
+            <li>
+                <h3>添加家务</h3>
+                <p>1. 确保你的钱包地址是合约的所有者<br>
+                   2. 在"家务"页面点击"添加家务"按钮<br>
+                   3. 填写家务名称和积分奖励<br>
+                   4. 点击"添加"按钮确认</p>
+            </li>
+            <li>
+                <h3>设置昵称</h3>
+                <p>1. 连接钱包后，在右上角点击"设置昵称"按钮<br>
+                   2. 在弹出的模态框中输入你的昵称<br>
+                   3. 点击"设置"按钮确认<br>
+                   4. 昵称会显示在钱包地址旁边</p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>技术实现</h2>
+        <ul class="feature-list">
+            <li>
+                <h3>智能合约修改</h3>
+                <p>- 添加了 `mapping(address => string) public nicknames` 映射<br>
+                   - 添加了 `setNickname(string memory _nickname)` 函数<br>
+                   - 添加了 `getNickname(address _member)` 函数<br>
+                   - 添加了 `NicknameSet` 事件</p>
+            </li>
+            <li>
+                <h3>前端功能</h3>
+                <p>- 更新了合约ABI以包含新函数<br>
+                   - 添加了昵称相关的状态管理<br>
+                   - 实现了添加家务的表单界面<br>
+                   - 实现了昵称设置的模态框<br>
+                   - 添加了相应的CSS样式</p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>注意事项</h2>
+        <ul class="feature-list">
+            <li>
+                <h3>权限控制</h3>
+                <p>只有合约的所有者才能添加家务，普通用户只能完成任务和设置昵称。</p>
+            </li>
+            <li>
+                <h3>数据持久化</h3>
+                <p>昵称和家务数据都存储在区块链上，具有不可篡改的特性。</p>
+            </li>
+            <li>
+                <h3>Gas费用</h3>
+                <p>添加家务和设置昵称都需要支付Gas费用，请确保钱包中有足够的ETH。</p>
+            </li>
+        </ul>
+    </div>
 </body>
 </html>
